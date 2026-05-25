@@ -1,0 +1,37 @@
+## @file
+# TLMM GPIO driver for MSM8996
+#
+# Copyright (c) 2024, Samsung / TianoCore Contributors.
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION    = 0x0001001B
+  BASE_NAME      = TlmmGpioDxe
+  FILE_GUID      = B3C4D5E6-F7A8-4912-B034-C5D6E7F80912
+  MODULE_TYPE    = DXE_DRIVER
+  VERSION_STRING = 1.0
+  ENTRY_POINT    = TlmmGpioDxeInitialize
+
+[Sources]
+  TlmmGpioDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  ArmPkg/ArmPkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  DebugLib
+  IoLib
+  UefiBootServicesTableLib
+
+[Protocols]
+  gEmbeddedGpioProtocolGuid
+
+[Depex]
+  TRUE

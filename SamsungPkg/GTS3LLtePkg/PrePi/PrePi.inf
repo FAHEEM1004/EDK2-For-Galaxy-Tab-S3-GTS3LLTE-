@@ -1,0 +1,51 @@
+## @file
+#  Pre-PI entry module for Samsung GTS3L LTE (MSM8996)
+#
+#  First UEFI code to execute — sets up MMU, HOB list and calls into DXE.
+#
+#  Copyright (c) 2024, Samsung / TianoCore Contributors.
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PrePi
+  FILE_GUID                      = 8A1F2C4E-6D3B-4F7A-A091-5B2E0C3D6A14
+  MODULE_TYPE                    = SEC
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = _ModuleEntryPoint
+
+[Sources.AARCH64]
+  PrePiEntry.S
+  PrePi.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  ArmLib
+  ArmMmuLib
+  BaseLib
+  BaseMemoryLib
+  CacheMaintenanceLib
+  DebugLib
+  HobLib
+  MemoryAllocationLib
+  PcdLib
+  PrePiLib
+  SerialPortLib
+
+[FixedPcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUartDefaultBaudRate
+  gSamsungTokenSpaceGuid.PcdMsmUartBase
+  gSamsungTokenSpaceGuid.PcdFdBaseAddress
+  gSamsungTokenSpaceGuid.PcdFdSize
+  gSamsungTokenSpaceGuid.PcdSystemMemoryBase
+  gSamsungTokenSpaceGuid.PcdSystemMemorySize
+  gArmTokenSpaceGuid.PcdFvBaseAddress
+  gArmTokenSpaceGuid.PcdFvSize

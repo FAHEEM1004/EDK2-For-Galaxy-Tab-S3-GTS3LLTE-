@@ -1,0 +1,33 @@
+## @file
+#  Platform memory map for Samsung GTS3L LTE (MSM8996)
+#
+#  Copyright (c) 2024, Samsung / TianoCore Contributors.
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PlatformMemoryMapLib
+  FILE_GUID                      = 2A8F1C3D-5E7B-4F9A-B012-6D4E8C1A3F25
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = ArmPlatformLib
+
+[Sources]
+  PlatformMemoryMap.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  ArmLib
+  BaseMemoryLib
+
+[FixedPcd]
+  gSamsungTokenSpaceGuid.PcdSystemMemoryBase
+  gSamsungTokenSpaceGuid.PcdSystemMemorySize
+  gSamsungTokenSpaceGuid.PcdFdBaseAddress
+  gSamsungTokenSpaceGuid.PcdFdSize

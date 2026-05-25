@@ -1,0 +1,39 @@
+## @file
+# MDSS / DSI Display driver — NT35597 WQXGA dual-DSI for MSM8996
+#
+# Copyright (c) 2024, Samsung / TianoCore Contributors.
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION    = 0x0001001B
+  BASE_NAME      = MdssDisplayDxe
+  FILE_GUID      = D5E6F7A8-B9CA-4B34-D256-E7F809123456
+  MODULE_TYPE    = DXE_DRIVER
+  VERSION_STRING = 1.0
+  ENTRY_POINT    = MdssDisplayDxeInitialize
+
+[Sources]
+  MdssDisplayDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  IoLib
+  MemoryAllocationLib
+  TimerLib
+  UefiBootServicesTableLib
+
+[Protocols]
+  gEfiGraphicsOutputProtocolGuid
+
+[Depex]
+  gEmbeddedGpioProtocolGuid

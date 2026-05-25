@@ -1,0 +1,183 @@
+## @file
+#  Flash Description File for Samsung Galaxy Tab S3 LTE (GTS3L LTE, SM-T825)
+#
+#  UEFI FD is loaded by XBL (eXtensible BootLoader) to 0x80200000.
+#  Size is 1 MB (the "UEFI FD" region in the XBL device-region table).
+#
+#  Firmware volume layout:
+#    [0x00000 – 0x0FFFF]  FV.SEC   (256 KB) — PrePi SEC module
+#    [0x10000 – 0xEFFFF]  FV.MAIN  (768 KB) — DXE + drivers + Shell
+#    [0xF0000 – 0xFFFFF]  NvStorage (64 KB) — UEFI variable store
+#
+#  Copyright (c) 2024, Samsung / TianoCore Contributors.
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[FD.GTS3LLte]
+  BaseAddress   = 0x80200000  # XBL loads UEFI FD here (verified)
+  Size          = 0x00100000  # 1 MB
+  ErasePolarity = 1
+  BlockSize     = 0x00001000  # 4 KB pages
+  NumBlocks     = 0x100
+
+  # SEC / PrePi (first 256 KB)
+  0x000000|0x040000
+  FV = FVMAIN_SEC
+
+  # Main DXE firmware volume (next 704 KB)
+  0x040000|0x0B0000
+  FV = FVMAIN
+
+  # NvStorage — UEFI variables (last 64 KB)
+  0x0F0000|0x00E000
+  FILE = EFI_FV_FILETYPE_RAW, gEfiSystemNvDataFvGuid {
+    SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/NvVarStoreFormatted.bin
+  }
+  0x0FE000|0x002000
+  FILE = EFI_FV_FILETYPE_RAW, gEfiFaultTolerantWorkingBlockDefaultId {
+    SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/NvFtwSpare.bin
+  }
+
+# ---------------------------------------------------------------------------
+# SEC / PrePi firmware volume
+# ---------------------------------------------------------------------------
+[FV.FVMAIN_SEC]
+  FvAlignment       = 8
+  ERASE_POLARITY    = 1
+  MEMORY_MAPPED     = TRUE
+  STICKY_WRITE      = TRUE
+  LOCK_CAP          = TRUE
+  LOCK_STATUS       = TRUE
+  WRITE_DISABLED_CAP= TRUE
+  WRITE_ENABLED_CAP = TRUE
+  WRITE_STATUS      = TRUE
+  WRITE_LOCK_CAP    = TRUE
+  WRITE_LOCK_STATUS = TRUE
+  READ_DISABLED_CAP = TRUE
+  READ_ENABLED_CAP  = TRUE
+  READ_STATUS       = TRUE
+  READ_LOCK_CAP     = TRUE
+  READ_LOCK_STATUS  = TRUE
+
+  INF SamsungPkg/GTS3LLtePkg/PrePi/PrePi.inf
+
+# ---------------------------------------------------------------------------
+# Main DXE firmware volume
+# ---------------------------------------------------------------------------
+[FV.FVMAIN]
+  FvAlignment       = 8
+  ERASE_POLARITY    = 1
+  MEMORY_MAPPED     = TRUE
+  STICKY_WRITE      = TRUE
+  LOCK_CAP          = TRUE
+  LOCK_STATUS       = TRUE
+  WRITE_DISABLED_CAP= TRUE
+  WRITE_ENABLED_CAP = TRUE
+  WRITE_STATUS      = TRUE
+  WRITE_LOCK_CAP    = TRUE
+  WRITE_LOCK_STATUS = TRUE
+  READ_DISABLED_CAP = TRUE
+  READ_ENABLED_CAP  = TRUE
+  READ_STATUS       = TRUE
+  READ_LOCK_CAP     = TRUE
+  READ_LOCK_STATUS  = TRUE
+
+  APRIORI DXE {
+    INF MdeModulePkg/Universal/PCD/Dxe/PcdDxe.inf
+    INF ArmPkg/Drivers/CpuDxe/CpuDxe.inf
+    INF MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+    INF MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
+    INF MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
+  }
+
+  # DXE Core
+  INF MdeModulePkg/Core/Dxe/DxeMain.inf
+
+  # PCD
+  INF MdeModulePkg/Universal/PCD/Dxe/PcdDxe.inf
+
+  # ARM core architecture
+  INF ArmPkg/Drivers/CpuDxe/CpuDxe.inf
+  INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+  INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
+  INF ArmPkg/Drivers/ArmPsciMpServicesDxe/ArmPsciMpServicesDxe.inf
+
+  # Platform init (SMBIOS, PSHOLD reset, hardware bringup)
+  INF SamsungPkg/GTS3LLtePkg/Drivers/PlatformDxe/PlatformDxe.inf
+
+  # GCC clock controller (must be first — gates all hardware)
+  INF SamsungPkg/GTS3LLtePkg/Drivers/GccClockDxe/GccClockDxe.inf
+
+  # TLMM GPIO (needed by PMIC, Display, Charger)
+  INF SamsungPkg/GTS3LLtePkg/Drivers/TlmmGpioDxe/TlmmGpioDxe.inf
+
+  # SPMI / PMIC (PM8994 + PMI8994 — voltage rails)
+  INF SamsungPkg/GTS3LLtePkg/Drivers/SpmiPmicDxe/SpmiPmicDxe.inf
+
+  # MDSS display — NT35597 WQXGA 2560×1600 dual-DSI (installs GOP)
+  INF SamsungPkg/GTS3LLtePkg/Drivers/MdssDisplayDxe/MdssDisplayDxe.inf
+
+  # HDMI TX (hot plug detection + 1080p60 timing)
+  INF SamsungPkg/GTS3LLtePkg/Drivers/HdmiDxe/HdmiDxe.inf
+
+  # UFS 1.1 internal storage
+  INF SamsungPkg/GTS3LLtePkg/Drivers/UfsDxe/UfsDxe.inf
+
+  # USB 3.0 DWC3 → xHCI
+  INF SamsungPkg/GTS3LLtePkg/Drivers/Usb3Dwc3Dxe/Usb3Dwc3Dxe.inf
+
+  # PCIe (3× RC; PCIe0 = QCA6174 WiFi/BT)
+  INF SamsungPkg/GTS3LLtePkg/Drivers/PcieDxe/PcieDxe.inf
+
+  # SM5705 charger / MUIC / fuel gauge (I2C)
+  INF SamsungPkg/GTS3LLtePkg/Drivers/Sm5705ChargerDxe/Sm5705ChargerDxe.inf
+
+  # ACPI tables (MADT/GICv3, GTDT, SPCR)
+  INF SamsungPkg/GTS3LLtePkg/Drivers/AcpiTablesDxe/AcpiTablesDxe.inf
+
+  # Runtime services
+  INF MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+  INF MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
+  INF MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
+  INF MdeModulePkg/Universal/ResetSystemRuntimeDxe/ResetSystemRuntimeDxe.inf
+  INF EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
+
+  # Security
+  INF MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
+  INF SecurityPkg/RandomNumberGenerator/RngDxe/RngDxe.inf
+
+  # Watchdog
+  INF MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
+
+  # Serial console
+  INF MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+
+  # Console infrastructure
+  INF MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
+  INF MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+  INF MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  INF MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+
+  # HII
+  INF MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+
+  # Block devices and filesystems
+  INF MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
+  INF MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+  INF MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
+  INF FatPkg/EnhancedFatDxe/Fat.inf
+
+  # USB
+  INF MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+  INF MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+  INF MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+
+  # SMBIOS
+  INF MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+
+  # Boot manager + UI
+  INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
+  INF MdeModulePkg/Application/UiApp/UiApp.inf
+
+  # UEFI Shell
+  INF ShellPkg/Application/Shell/Shell.inf

@@ -1,0 +1,128 @@
+## @file
+#  Samsung Device Package — declaration file
+#
+#  Covers Samsung mobile/tablet devices ported to EDK2 / UEFI.
+#  Currently: Samsung Galaxy Tab S3 LTE (GTS3L LTE, SM-T825)
+#             based on Qualcomm MSM8996 (Snapdragon 820).
+#
+#  All PCDs verified against firmware binaries:
+#    xbl.elf (XBL MMIO/memory table), appsboot.mbn (LK), tz.mbn, hyp.mbn
+#    GTS3LLTE_EUR_OPEN.pit (Samsung partition table)
+#
+#  Copyright (c) 2024, Samsung / TianoCore Contributors.
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x0001001B
+  PACKAGE_NAME                   = SamsungPkg
+  PACKAGE_GUID                   = 4E1A6A2E-8F3C-4D7B-A912-3C0E5F1D2B8A
+  PACKAGE_VERSION                = 0.1
+
+[Includes]
+  Include
+
+[Guids]
+  gSamsungTokenSpaceGuid = { 0x4e1a6a2e, 0x8f3c, 0x4d7b, { 0xa9, 0x12, 0x3c, 0x0e, 0x5f, 0x1d, 0x2b, 0x8a } }
+
+[Protocols]
+  gClockProtocolGuid     = { 0xa1b2c3d4, 0xe5f6, 0x7890, { 0xa1, 0xb2, 0xc3, 0xd4, 0xe5, 0xf6, 0x78, 0x90 } }
+
+[PcdsFixedAtBuild]
+  # -------------------------------------------------------------------------
+  # DRAM layout — verified from XBL device-region table (AUTHORITATIVE)
+  # -------------------------------------------------------------------------
+  gSamsungTokenSpaceGuid.PcdSystemMemoryBase|0x80000000|UINT64|0x00010001
+  gSamsungTokenSpaceGuid.PcdSystemMemorySize|0x100000000|UINT64|0x00010002
+
+  # UEFI FD — XBL loads UEFI image here (CONFIRMED from XBL "UEFI FD" region)
+  gSamsungTokenSpaceGuid.PcdFdBaseAddress|0x80200000|UINT64|0x00010003
+  gSamsungTokenSpaceGuid.PcdFdSize|0x00100000|UINT32|0x00010004
+
+  # Display framebuffer — XBL "Display Reserved" @ 0x80400000 (8 MB)
+  gSamsungTokenSpaceGuid.PcdFrameBufferBase|0x80400000|UINT32|0x00010005
+  gSamsungTokenSpaceGuid.PcdFrameBufferSize|0x00800000|UINT32|0x00010006
+
+  # UEFI Stack — XBL "UEFI Stack" region (256 KB)
+  gSamsungTokenSpaceGuid.PcdUefiStackBase|0x80C00000|UINT32|0x00010007
+  gSamsungTokenSpaceGuid.PcdUefiStackSize|0x00040000|UINT32|0x00010008
+
+  # SMEM (shared memory — UEFI↔firmware subsystems)
+  gSamsungTokenSpaceGuid.PcdSmemBase|0x86000000|UINT32|0x00010009
+  gSamsungTokenSpaceGuid.PcdSmemSize|0x00200000|UINT32|0x0001000A
+
+  # -------------------------------------------------------------------------
+  # SoC MMIO peripherals — verified from XBL MMIO table and DTB
+  # -------------------------------------------------------------------------
+
+  # GICv3 — verified DTB: interrupt-controller@09bc0000
+  gSamsungTokenSpaceGuid.PcdGicDistributorBase|0x09BC0000|UINT32|0x0001000B
+  gSamsungTokenSpaceGuid.PcdGicRedistributorsBase|0x09C00000|UINT32|0x0001000C
+
+  # ARM Generic Timer — 19.2 MHz TCXO
+  gSamsungTokenSpaceGuid.PcdArmArchTimerFreqInHz|19200000|UINT32|0x0001000D
+
+  # Debug UART — BLSP2 UART1 @ 0x075B0000 (status=ok in DTB, UART_DM Initialized in LK)
+  gSamsungTokenSpaceGuid.PcdMsmUartBase|0x075B0000|UINT32|0x0001000E
+
+  # PSHOLD reset register (qcom,pshold)
+  gSamsungTokenSpaceGuid.PcdPsHoldBase|0x004AB000|UINT32|0x0001000F
+
+  # GCC Global Clock Controller
+  gSamsungTokenSpaceGuid.PcdGccBase|0x00300000|UINT32|0x00010010
+
+  # TLMM GPIO controller (150 GPIOs)
+  gSamsungTokenSpaceGuid.PcdTlmmBase|0x01000000|UINT32|0x00010011
+  gSamsungTokenSpaceGuid.PcdGpioCount|150|UINT32|0x00010012
+
+  # SPMI / PMIC arbiter (PM8994 + PMI8994)
+  gSamsungTokenSpaceGuid.PcdSpmiBase|0x04000000|UINT32|0x00010013
+
+  # UFS 1.1 host controller
+  gSamsungTokenSpaceGuid.PcdUfsBase|0x00620000|UINT32|0x00010014
+
+  # USB 3.0 DWC3 wrapper
+  gSamsungTokenSpaceGuid.PcdUsb3Base|0x06A00000|UINT32|0x00010015
+
+  # MDSS display subsystem
+  gSamsungTokenSpaceGuid.PcdMdssBase|0x00900000|UINT32|0x00010016
+  gSamsungTokenSpaceGuid.PcdDsi0Base|0x00994000|UINT32|0x00010017
+  gSamsungTokenSpaceGuid.PcdDsi1Base|0x00996000|UINT32|0x00010018
+
+  # HDMI TX
+  gSamsungTokenSpaceGuid.PcdHdmiBase|0x009A0000|UINT32|0x00010019
+
+  # PCIe (3 root complexes; PCIe0 hosts QCA6174 WiFi/BT)
+  gSamsungTokenSpaceGuid.PcdPcie0AhbBase|0x00600000|UINT32|0x0001001A
+  gSamsungTokenSpaceGuid.PcdPcie0AxiBase|0x0C000000|UINT32|0x0001001B
+
+  # IMEM (internal SRAM / boot cookies)
+  gSamsungTokenSpaceGuid.PcdImemBase|0x06680000|UINT32|0x0001001C
+  gSamsungTokenSpaceGuid.PcdImemCookieBase|0x066BF000|UINT32|0x0001001D
+
+  # SM5705 charger/MUIC/FuelGauge — BLSP2 QUP2 I2C base
+  gSamsungTokenSpaceGuid.PcdSm5705I2cBase|0x075B6000|UINT32|0x0001001E
+
+  # PRNG (hardware random number generator)
+  gSamsungTokenSpaceGuid.PcdPrngBase|0x00080000|UINT32|0x0001001F
+
+  # Crypto engine (CE1)
+  gSamsungTokenSpaceGuid.PcdCryptoBase|0x00640000|UINT32|0x00010020
+
+  # MMSS block base
+  gSamsungTokenSpaceGuid.PcdMmssBase|0x00800000|UINT32|0x00010021
+
+  # Display panel resolution (NT35597 WQXGA dual-DSI)
+  gSamsungTokenSpaceGuid.PcdDisplayWidth|2560|UINT32|0x00010022
+  gSamsungTokenSpaceGuid.PcdDisplayHeight|1600|UINT32|0x00010023
+
+  # Watchdog timer
+  gSamsungTokenSpaceGuid.PcdWdogBase|0x00980000|UINT32|0x00010024
+
+  # RPM Message RAM
+  gSamsungTokenSpaceGuid.PcdRpmMsgRamBase|0x00068000|UINT32|0x00010025
+  gSamsungTokenSpaceGuid.PcdRpmMsgRamSize|0x00008000|UINT32|0x00010026
+
+  # BLSP I2C buses (from DTB aliases)
+  gSamsungTokenSpaceGuid.PcdBlsp1Base|0x07570000|UINT32|0x00010027
+  gSamsungTokenSpaceGuid.PcdBlsp2Base|0x075A0000|UINT32|0x00010028

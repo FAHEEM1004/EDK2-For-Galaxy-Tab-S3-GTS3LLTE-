@@ -1,0 +1,34 @@
+## @file
+# Samsung SM5705 Charger / MUIC / Fuel Gauge driver (I2C, BLSP2 QUP2)
+#
+# Copyright (c) 2024, Samsung / TianoCore Contributors.
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION    = 0x0001001B
+  BASE_NAME      = Sm5705ChargerDxe
+  FILE_GUID      = B9CADBEC-F012-4F78-B69A-1234567ABCDE
+  MODULE_TYPE    = DXE_DRIVER
+  VERSION_STRING = 1.0
+  ENTRY_POINT    = Sm5705ChargerDxeInitialize
+
+[Sources]
+  Sm5705ChargerDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  DebugLib
+  IoLib
+  TimerLib
+  UefiBootServicesTableLib
+
+[Depex]
+  gEmbeddedGpioProtocolGuid

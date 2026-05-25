@@ -1,0 +1,40 @@
+## @file
+#  Platform Boot Manager Library for Samsung GTS3L LTE (MSM8996)
+#
+#  Copyright (c) 2024, Samsung / TianoCore Contributors.
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PlatformBootManagerLib
+  FILE_GUID                      = 3D5B2C1A-8F4E-4A7D-B923-7E0F1C2A4B63
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PlatformBootManagerLib|DXE_DRIVER UEFI_APPLICATION
+
+[Sources]
+  PlatformBootManager.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  DevicePathLib
+  MemoryAllocationLib
+  UefiBootManagerLib
+  UefiBootServicesTableLib
+  UefiLib
+  UefiRuntimeServicesTableLib
+  PrintLib
+
+[Guids]
+  gEfiGlobalVariableGuid
+
+[Protocols]
+  gEfiGraphicsOutputProtocolGuid

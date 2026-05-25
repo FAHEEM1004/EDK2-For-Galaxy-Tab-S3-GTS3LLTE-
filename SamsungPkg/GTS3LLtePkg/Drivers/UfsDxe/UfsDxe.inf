@@ -1,0 +1,41 @@
+## @file
+# UFS host controller driver for MSM8996
+# Full JEDEC UFSHCI 1.1 UTRD/UPIU/SCSI READ(10)/WRITE(10) implementation
+#
+# Copyright (c) 2024, Samsung / TianoCore Contributors.
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION    = 0x0001001B
+  BASE_NAME      = UfsDxe
+  FILE_GUID      = E6F7A8B9-CADB-4C45-E367-F809123456AB
+  MODULE_TYPE    = DXE_DRIVER
+  VERSION_STRING = 1.0
+  ENTRY_POINT    = UfsDxeInitialize
+
+[Sources]
+  UfsDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  BaseMemoryLib
+  CacheMaintenanceLib
+  DebugLib
+  IoLib
+  MemoryAllocationLib
+  TimerLib
+  UefiBootServicesTableLib
+
+[Protocols]
+  gEfiBlockIoProtocolGuid
+
+[Depex]
+  TRUE

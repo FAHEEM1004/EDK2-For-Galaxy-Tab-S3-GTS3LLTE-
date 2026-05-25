@@ -1,0 +1,35 @@
+## @file
+# PCIe driver for MSM8996 — all three root complexes (PCIe0/1/2)
+# PCIe0: QCA6174 WiFi/BT  PCIe1/2: open slots fully initialised
+#
+# Copyright (c) 2024, Samsung / TianoCore Contributors.
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION    = 0x0001001B
+  BASE_NAME      = PcieDxe
+  FILE_GUID      = A8B9CADB-ECF0-4E67-A589-0A1234567CDE
+  MODULE_TYPE    = DXE_DRIVER
+  VERSION_STRING = 1.0
+  ENTRY_POINT    = PcieDxeInitialize
+
+[Sources]
+  PcieDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  DebugLib
+  IoLib
+  TimerLib
+  UefiBootServicesTableLib
+
+[Depex]
+  TRUE

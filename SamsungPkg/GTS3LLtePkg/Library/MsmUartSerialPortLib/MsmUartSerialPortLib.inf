@@ -1,0 +1,29 @@
+## @file
+#  Serial port library for MSM UARTDM v1.4 (lsuart-v14)
+#  Target: serial@075b0000 on Samsung GTS3L LTE (MSM8996)
+#
+#  Copyright (c) 2024, Samsung / TianoCore Contributors.
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = MsmUartSerialPortLib
+  FILE_GUID                      = 7C3A1F4B-9D2E-4E6A-B01F-5C8A2D3E7F91
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SerialPortLib
+
+[Sources]
+  MsmUartSerialPort.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  IoLib
+  PcdLib
+
+[FixedPcd]
+  gSamsungTokenSpaceGuid.PcdMsmUartBase

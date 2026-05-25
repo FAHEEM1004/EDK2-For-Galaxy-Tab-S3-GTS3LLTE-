@@ -1,0 +1,44 @@
+## @file
+#  Platform DXE driver for Samsung GTS3L LTE (MSM8996)
+#  Installs SMBIOS tables and the PSHOLD-based reset handler.
+#
+#  Copyright (c) 2024, Samsung / TianoCore Contributors.
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PlatformDxe
+  FILE_GUID                      = 1F3C7A9D-5B2E-4D8F-C041-8E6A0D1B4C72
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = PlatformDxeEntryPoint
+
+[Sources]
+  PlatformDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  SamsungPkg/SamsungPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  IoLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiRuntimeServicesTableLib
+
+[Guids]
+
+[Protocols]
+  gEfiSmbiosProtocolGuid
+  gEfiResetNotificationProtocolGuid
+
+[Depex]
+  gEfiSmbiosProtocolGuid
