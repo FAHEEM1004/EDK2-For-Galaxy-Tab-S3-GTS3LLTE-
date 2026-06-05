@@ -41,6 +41,7 @@ PlatformBootManagerBeforeConsole (
 {
   EFI_STATUS                    Status;
   EFI_BOOT_MANAGER_LOAD_OPTION  BootOption;
+  EFI_DEVICE_PATH_PROTOCOL      *ShellDevicePath;
 
   DEBUG ((DEBUG_INFO, "GTS3L: PlatformBootManagerBeforeConsole\n"));
 
@@ -50,20 +51,24 @@ PlatformBootManagerBeforeConsole (
   // Enumerate all boot options from connected devices
   EfiBootManagerRefreshAllBootOption ();
 
-  // Add the UEFI Shell as a boot option if it is not already present
-  Status = EfiBootManagerInitializeLoadOption (
-             &BootOption,
-             LoadOptionNumberUnassigned,
-             LoadOptionTypeBoot,
-             LOAD_OPTION_ACTIVE,
-             L"UEFI Shell",
-             DevPathFromText (L"Fv(*)\\EFI\\Shell\\Shell.efi"),
-             NULL,
-             0
-             );
-  if (!EFI_ERROR (Status)) {
-    EfiBootManagerAddLoadOptionVariable (&BootOption, MAX_UINTN);
-    EfiBootManagerFreeLoadOption (&BootOption);
+  // Add the UEFI Shell as a boot option if it is not already present.
+  ShellDevicePath = ConvertTextToDevicePath (L"Fv(*)\\EFI\\Shell\\Shell.efi");
+  if (ShellDevicePath != NULL) {
+    Status = EfiBootManagerInitializeLoadOption (
+               &BootOption,
+               LoadOptionNumberUnassigned,
+               LoadOptionTypeBoot,
+               LOAD_OPTION_ACTIVE,
+               L"UEFI Shell",
+               ShellDevicePath,
+               NULL,
+               0
+               );
+    if (!EFI_ERROR (Status)) {
+      EfiBootManagerAddLoadOptionVariable (&BootOption, MAX_UINTN);
+      EfiBootManagerFreeLoadOption (&BootOption);
+    }
+    FreePool (ShellDevicePath);
   }
 }
 
@@ -125,8 +130,6 @@ PlatformBootManagerUnableToBoot (
   VOID
   )
 {
-  EFI_STATUS                    Status;
-  EFI_BOOT_MANAGER_LOAD_OPTION  BootOption;
   EFI_BOOT_MANAGER_LOAD_OPTION  *BootOptions;
   UINTN                         BootOptionCount;
   UINTN                         Index;
@@ -137,9 +140,9 @@ PlatformBootManagerUnableToBoot (
   BootOptions = EfiBootManagerGetLoadOptions (&BootOptionCount, LoadOptionTypeBoot);
   for (Index = 0; Index < BootOptionCount; Index++) {
     if (StrCmp (BootOptions[Index].Description, L"UEFI Shell") == 0) {
-      Status = EfiBootManagerBoot (&BootOptions[Index]);
-      if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "GTS3L: Shell launch failed: %r\n", Status));
+      EfiBootManagerBoot (&BootOptions[Index]);
+      if (EFI_ERROR (BootOptions[Index].Status)) {
+        DEBUG ((DEBUG_ERROR, "GTS3L: Shell launch failed: %r\n", BootOptions[Index].Status));
       }
       break;
     }
@@ -160,4 +163,18 @@ PlatformRegisterConsoles (
   // Serial (debug UART) is registered via ConIn/ConOut PCDs in the DSC.
   // This function is a placeholder for additional console registration
   // (e.g., USB keyboard) that may be added later.
+}
+
+/**
+  Called once per second while the boot manager waits for its timeout.
+
+  @param  TimeoutRemain  Remaining timeout in seconds.
+**/
+VOID
+EFIAPI
+PlatformBootManagerWaitCallback (
+  UINT16  TimeoutRemain
+  )
+{
+  DEBUG ((DEBUG_INFO, "GTS3L: Boot manager timeout: %u\n", TimeoutRemain));
 }

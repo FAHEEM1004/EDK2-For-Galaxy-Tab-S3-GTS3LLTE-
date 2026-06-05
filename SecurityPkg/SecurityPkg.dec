@@ -23,7 +23,6 @@
   Include
   Test/Mock/Include
   DeviceSecurity/SpdmLib/Include
-  DeviceSecurity/SpdmLib/libspdm/include
 
 [LibraryClasses]
   ##  @libraryclass  Provides hash interfaces from different implementations.

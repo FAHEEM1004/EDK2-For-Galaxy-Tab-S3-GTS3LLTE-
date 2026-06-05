@@ -6,7 +6,7 @@
 //
 // XBL register convention on entry:
 //   x0 = FD base address  (0x80200000, may also be passed as a hint)
-//   x1 = FD size          (0x00100000, 1 MB)
+//   x1 = FD size          (0x00400000, 4 MB)
 //   x2 = reserved / DRAM size
 //   x3 = reserved
 //   SP = somewhere in XBL — we override it immediately
@@ -21,7 +21,7 @@
 // Copyright (c) 2024, Samsung / TianoCore Contributors.
 // SPDX-License-Identifier: BSD-2-Clause-Patent
 
-#include <AsmMacroIoLibV8.h>
+#include <AsmMacroLib.h>
 
 .text
 .align 3
@@ -41,24 +41,10 @@ ASM_PFX(_ModuleEntryPoint):
   MOV64 (x2, 0x80C40000)
   mov   sp, x2
 
-  // Zero BSS segment (__bss_start / __bss_end from linker script)
-  adrp  x4, __bss_start
-  add   x4, x4, :lo12:__bss_start
-  adrp  x5, __bss_end
-  add   x5, x5, :lo12:__bss_end
-  sub   x6, x5, x4
-  cbz   x6, .Lbss_done
-  mov   x7, #0
-.Lbss_loop:
-  str   x7, [x4], #8
-  subs  x6, x6, #8
-  b.gt  .Lbss_loop
-.Lbss_done:
-
   // If XBL did not pass FD base (x20 == 0), use PCD-fixed value
   cbnz  x20, .Lfd_ok
   MOV64 (x20, 0x80200000)     // FD_BASE (PcdFdBaseAddress, verified from XBL)
-  MOV64 (x21, 0x00100000)     // FD_SIZE 1 MB
+  MOV64 (x21, 0x00400000)     // FD_SIZE 4 MB
 .Lfd_ok:
 
   // Call PrePiMain(FdBase, FdSize, StackBase, StackSize)

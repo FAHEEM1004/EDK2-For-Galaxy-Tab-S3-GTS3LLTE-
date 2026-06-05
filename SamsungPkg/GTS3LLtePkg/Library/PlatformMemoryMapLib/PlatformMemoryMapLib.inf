@@ -19,6 +19,7 @@
 [Packages]
   MdePkg/MdePkg.dec
   ArmPkg/ArmPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
   SamsungPkg/SamsungPkg.dec
 

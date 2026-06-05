@@ -42,10 +42,8 @@ MsmPsHoldReset (
   )
 {
   MmioWrite32 ((UINTN)MSM8996_PSHOLD_BASE, 0);
-  // Should not return — spin if it does
-  for (;;) {
-    ArmCallWFI ();
-  }
+  // Should not return — spin if it does.
+  CpuDeadLoop ();
 }
 
 /**
@@ -175,16 +173,17 @@ InstallSmbios (
       },
       .Socket          = 1,
       .ProcessorType   = CentralProcessor,
-      .ProcessorFamily = ProcessorFamilyARMv8,
-      .ProcessorManufacture = 2,
+      .ProcessorFamily = ProcessorFamilyIndicatorFamily2,
+      .ProcessorManufacturer = 2,
       .ProcessorVersion = 3,
       .MaxSpeed        = 2150,   // MHz (Gold cluster peak)
       .CurrentSpeed    = 2150,
       .Status          = 0x41,   // CPU Enabled, Populated
       .ProcessorUpgrade = ProcessorUpgradeUnknown,
       .CoreCount       = 4,
-      .CoreEnabled     = 4,
+      .EnabledCoreCount = 4,
       .ThreadCount     = 4,
+      .ProcessorFamily2 = ProcessorFamilyARMv8,
     },
     .Strings = "U6\0" "Qualcomm\0" "Snapdragon 820 (MSM8996)\0\0",
   };
@@ -199,7 +198,7 @@ InstallSmbios (
       },
       .MemoryType    = MemoryTypeLpddr4,
       .Size          = 4096,    // MB
-      .FormFactor    = MemoryFormFactorRowBGA,
+      .FormFactor    = MemoryFormFactorDie,
       .Speed         = 1866,    // MT/s
       .Manufacturer  = 1,
       .DataWidth     = 64,
@@ -240,7 +239,7 @@ PlatformDxeEntryPoint (
 {
   DEBUG ((DEBUG_INFO, "GTS3L: PlatformDxe initialising\n"));
   DEBUG ((DEBUG_INFO, "GTS3L: SoC   = Qualcomm MSM8996 (Snapdragon 820)\n"));
-  DEBUG ((DEBUG_INFO, "GTS3L: UART  = 0x%08x (msm-lsuart-v14)\n", MSM8996_UART_BASE));
+  DEBUG ((DEBUG_INFO, "GTS3L: UART  = 0x%08x (msm-lsuart-v14)\n", MSM8996_DEBUG_UART_BASE));
   DEBUG ((DEBUG_INFO, "GTS3L: GICd  = 0x%08x\n", MSM8996_GIC_DIST_BASE));
   DEBUG ((DEBUG_INFO, "GTS3L: GICr  = 0x%08x\n", MSM8996_GIC_REDIST_BASE));
   DEBUG ((DEBUG_INFO, "GTS3L: Timer = %u Hz\n",   MSM8996_TIMER_FREQ_HZ));

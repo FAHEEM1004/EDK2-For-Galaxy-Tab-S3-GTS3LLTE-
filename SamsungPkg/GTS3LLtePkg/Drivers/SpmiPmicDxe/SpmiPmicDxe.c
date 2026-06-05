@@ -116,7 +116,7 @@ SpmiWrite (
   UINTN   Timeout;
 
   // Build command: EXT_REG_WRITE_LONG, 1 byte
-  Cmd0 = (SPMI_CMD_EXT_REG_WRITE_LONG << 27) |
+  Cmd0 = ((UINT32)SPMI_CMD_EXT_REG_WRITE_LONG << 27) |
          (SlaveId << 20) |
          ((RegAddr >> 8) << 4) |
          0;         // byte count - 1 = 0
@@ -152,7 +152,7 @@ SpmiRead (
   UINT32  Cmd0, Status;
   UINTN   Timeout;
 
-  Cmd0 = (SPMI_CMD_EXT_REG_READ_LONG << 27) |
+  Cmd0 = ((UINT32)SPMI_CMD_EXT_REG_READ_LONG << 27) |
          (SlaveId << 20) |
          ((RegAddr >> 8) << 4) |
          0;

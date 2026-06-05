@@ -227,7 +227,7 @@
 //
 //  XBL-managed regions (must NOT be disturbed by UEFI):
 //    0x80100000 0x00100000  HLOS 0           (Conv/WB)
-//    0x80200000 0x00100000  UEFI FD          ← firmware image loads here
+//    0x80200000 0x00400000  UEFI FD          ← firmware image loads here
 //    0x80300000 0x00080000  MPPark Code      (RT code, uncached)
 //    0x80380000 0x00001000  FBPT Payload     (RT data)
 //    0x80381000 0x00004000  DBG2             (loader data)
@@ -262,7 +262,7 @@
 
 // UEFI firmware image (FD) — XBL loads UEFI here
 #define MSM8996_FD_BASE                 0x80200000ULL
-#define MSM8996_FD_SIZE                 0x00100000       // 1 MB
+#define MSM8996_FD_SIZE                 0x00400000       // 4 MB
 #define MSM8996_FD_BLOCK_SIZE           0x00001000       // 4 KB page
 
 // Display framebuffer — XBL "Display Reserved"

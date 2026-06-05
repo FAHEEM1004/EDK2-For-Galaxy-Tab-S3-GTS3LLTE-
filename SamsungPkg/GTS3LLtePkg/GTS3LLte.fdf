@@ -2,12 +2,12 @@
 #  Flash Description File for Samsung Galaxy Tab S3 LTE (GTS3L LTE, SM-T825)
 #
 #  UEFI FD is loaded by XBL (eXtensible BootLoader) to 0x80200000.
-#  Size is 1 MB (the "UEFI FD" region in the XBL device-region table).
+#  Size is 4 MB to accommodate the current DXE payload.
 #
 #  Firmware volume layout:
 #    [0x00000 – 0x0FFFF]  FV.SEC   (256 KB) — PrePi SEC module
-#    [0x10000 – 0xEFFFF]  FV.MAIN  (768 KB) — DXE + drivers + Shell
-#    [0xF0000 – 0xFFFFF]  NvStorage (64 KB) — UEFI variable store
+#    [0x40000 – 0x3EFFFF] FV.MAIN  (3776 KB) — DXE + drivers + Shell
+#    [0x3F0000 – 0x3FFFFF] NvStorage (64 KB) — UEFI variable store
 #
 #  Copyright (c) 2024, Samsung / TianoCore Contributors.
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -15,27 +15,27 @@
 
 [FD.GTS3LLte]
   BaseAddress   = 0x80200000  # XBL loads UEFI FD here (verified)
-  Size          = 0x00100000  # 1 MB
+  Size          = 0x00400000  # 4 MB
   ErasePolarity = 1
   BlockSize     = 0x00001000  # 4 KB pages
-  NumBlocks     = 0x100
+  NumBlocks     = 0x400
 
   # SEC / PrePi (first 256 KB)
   0x000000|0x040000
   FV = FVMAIN_SEC
 
-  # Main DXE firmware volume (next 704 KB)
-  0x040000|0x0B0000
+  # Main DXE firmware volume (next 3776 KB)
+  0x040000|0x3B0000
   FV = FVMAIN
 
-  # NvStorage — UEFI variables (last 64 KB)
-  0x0F0000|0x00E000
-  FILE = EFI_FV_FILETYPE_RAW, gEfiSystemNvDataFvGuid {
-    SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/NvVarStoreFormatted.bin
+  # Reserved NV storage area (last 64 KB).
+  0x3F0000|0x00E000
+  DATA = {
+    0x00
   }
-  0x0FE000|0x002000
-  FILE = EFI_FV_FILETYPE_RAW, gEfiFaultTolerantWorkingBlockDefaultId {
-    SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/NvFtwSpare.bin
+  0x3FE000|0x002000
+  DATA = {
+    0x00
   }
 
 # ---------------------------------------------------------------------------
@@ -83,7 +83,7 @@
   READ_LOCK_STATUS  = TRUE
 
   APRIORI DXE {
-    INF MdeModulePkg/Universal/PCD/Dxe/PcdDxe.inf
+    INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
     INF ArmPkg/Drivers/CpuDxe/CpuDxe.inf
     INF MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
     INF MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
@@ -94,11 +94,11 @@
   INF MdeModulePkg/Core/Dxe/DxeMain.inf
 
   # PCD
-  INF MdeModulePkg/Universal/PCD/Dxe/PcdDxe.inf
+  INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
 
   # ARM core architecture
   INF ArmPkg/Drivers/CpuDxe/CpuDxe.inf
-  INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+  INF ArmPkg/Drivers/ArmGicDxe/ArmGicDxe.inf
   INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
   INF ArmPkg/Drivers/ArmPsciMpServicesDxe/ArmPsciMpServicesDxe.inf
 
@@ -181,3 +181,5 @@
 
   # UEFI Shell
   INF ShellPkg/Application/Shell/Shell.inf
+
+!include ArmVirtPkg/ArmVirtRules.fdf.inc

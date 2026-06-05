@@ -20,6 +20,7 @@
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   ArmPkg/ArmPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
   SamsungPkg/SamsungPkg.dec
 
 [LibraryClasses]
