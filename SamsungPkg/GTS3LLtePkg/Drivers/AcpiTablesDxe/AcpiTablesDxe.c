@@ -89,7 +89,7 @@ STATIC GTS3L_MADT  mMadt = {
     .PerformanceInterruptGsiv = 23,  // PPI 7 = SPI 23 (PMU)
     .ParkedAddress       = 0,
     .PhysicalBaseAddress = 0,        // GICv3 — no GICC MMIO needed
-    .GICR_BaseAddress    = MSM8996_GIC_REDIST_BASE + 0 * 0x20000,
+    .GICRBaseAddress    = MSM8996_GIC_REDIST_BASE + 0 * 0x20000,
     .MPIDR               = 0x0000000000000000ULL,
     .ProcessorPowerEfficiencyClass = 1,  // efficiency core
   },
@@ -104,7 +104,7 @@ STATIC GTS3L_MADT  mMadt = {
     .PerformanceInterruptGsiv = 23,
     .ParkedAddress       = 0,
     .PhysicalBaseAddress = 0,
-    .GICR_BaseAddress    = MSM8996_GIC_REDIST_BASE + 1 * 0x20000,
+    .GICRBaseAddress    = MSM8996_GIC_REDIST_BASE + 1 * 0x20000,
     .MPIDR               = 0x0000000000000001ULL,
     .ProcessorPowerEfficiencyClass = 1,
   },
@@ -119,7 +119,7 @@ STATIC GTS3L_MADT  mMadt = {
     .PerformanceInterruptGsiv = 23,
     .ParkedAddress       = 0,
     .PhysicalBaseAddress = 0,
-    .GICR_BaseAddress    = MSM8996_GIC_REDIST_BASE + 2 * 0x20000,
+    .GICRBaseAddress    = MSM8996_GIC_REDIST_BASE + 2 * 0x20000,
     .MPIDR               = 0x0000000000000100ULL,
     .ProcessorPowerEfficiencyClass = 0,  // performance core
   },
@@ -134,7 +134,7 @@ STATIC GTS3L_MADT  mMadt = {
     .PerformanceInterruptGsiv = 23,
     .ParkedAddress       = 0,
     .PhysicalBaseAddress = 0,
-    .GICR_BaseAddress    = MSM8996_GIC_REDIST_BASE + 3 * 0x20000,
+    .GICRBaseAddress    = MSM8996_GIC_REDIST_BASE + 3 * 0x20000,
     .MPIDR               = 0x0000000000000101ULL,
     .ProcessorPowerEfficiencyClass = 0,
   },
@@ -145,7 +145,7 @@ STATIC GTS3L_MADT  mMadt = {
     .GicId               = 0,
     .PhysicalBaseAddress = MSM8996_GIC_DIST_BASE,
     .SystemVectorBase    = 0,
-    .GicVersion          = EFI_ACPI_6_2_GIC_VERSION_3,
+    .GicVersion          = 3,
   },
   // GICv3 Redistributors block
   .GicRedist = {
@@ -210,7 +210,7 @@ STATIC EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE  mSpcr = {
   .Header = {
     .Signature       = EFI_ACPI_2_0_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE,
     .Length          = sizeof (EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE),
-    .Revision        = 4,
+    .Revision        = EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_REVISION,
     .OemId           = ACPI_OEM_ID,
     .OemTableId      = ACPI_OEM_TABLE_ID,
     .OemRevision     = 1,
@@ -218,7 +218,7 @@ STATIC EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE  mSpcr = {
     .CreatorRevision = ACPI_CREATOR_REV,
   },
   .InterfaceType = 3,  // ARM PL011 / generic MMIO — type 3 = "Other"
-  .Reserved0     = {0, 0, 0},
+  .Reserved1     = { 0, 0, 0 },
   .BaseAddress   = {
     .AddressSpaceId    = EFI_ACPI_3_0_SYSTEM_MEMORY,
     .RegisterBitWidth  = 8,
@@ -234,7 +234,7 @@ STATIC EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE  mSpcr = {
   .StopBits      = EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_STOP_BITS_1,
   .FlowControl   = 0,
   .TerminalType  = EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_TERMINAL_TYPE_ANSI,
-  .Reserved1     = 0,
+  .Reserved2     = 0,
   .PciDeviceId   = 0xFFFF,
   .PciVendorId   = 0xFFFF,
   .PciBusNumber  = 0,
@@ -242,7 +242,7 @@ STATIC EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE  mSpcr = {
   .PciFunctionNumber = 0,
   .PciFlags      = 0,
   .PciSegment    = 0,
-  .Reserved2     = 0,
+  .Reserved3     = 0,
 };
 
 #pragma pack()

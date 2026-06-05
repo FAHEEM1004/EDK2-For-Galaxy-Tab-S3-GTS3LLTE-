@@ -37,7 +37,7 @@
   # UEFI FD base — XBL loads firmware HERE (verified from XBL "UEFI FD" region table)
   #
   DEFINE FD_BASE                 = 0x80200000
-  DEFINE FD_SIZE                 = 0x00100000  # 1 MB
+  DEFINE FD_SIZE                 = 0x00400000  # 4 MB (current DXE payload + shell)
   DEFINE FD_BLOCK_SIZE           = 0x00001000  # 4 KB pages
 
   # Free DRAM for DXE (HLOS1 0x80D00000–0x83FFFFFF = 51 MB
@@ -75,11 +75,9 @@
 
   # ARM Generic Timer — 19.2 MHz TCXO
   gEmbeddedTokenSpaceGuid.PcdTimerPeriod|100000          # 10 ms tick
-  gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|19200000
   gSamsungTokenSpaceGuid.PcdArmArchTimerFreqInHz|19200000
 
   # PSCI — SMC-based, PSCI 1.0
-  gArmTokenSpaceGuid.PcdArmPsciSupport|1
   gArmPlatformTokenSpaceGuid.PcdCoreCount|4
   gArmPlatformTokenSpaceGuid.PcdClusterCount|2
 
@@ -132,15 +130,12 @@
   gSamsungTokenSpaceGuid.PcdUefiStackSize|0x00040000
 
   # Console
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|50
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|160
 
   # Stack settings — XBL "UEFI Stack" region @ 0x80C00000, 256 KB
   gEmbeddedTokenSpaceGuid.PcdPrePiStackBase|0x80C00000
   gEmbeddedTokenSpaceGuid.PcdPrePiStackSize|0x00040000   # 256 KB
 
   # CPU physical address size (MSM8996 uses 36-bit PA)
-  gArmTokenSpaceGuid.PcdArmPhysicalAddressBitWidth|36
 
   # Debug output
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2F
@@ -156,6 +151,13 @@
   # eMMC-style mass storage (we use UFS)
   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvModeEnable|TRUE
 
+!include MdePkg/MdeLibs.dsc.inc
+
+[PcdsDynamicDefault.common]
+  # Console
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|50
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|160
+
 # ---------------------------------------------------------------------------
 # Library class mappings
 # ---------------------------------------------------------------------------
@@ -163,6 +165,9 @@
 [LibraryClasses.common]
   # Compiler / linker support
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
+  DxeCoreEntryPoint|MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
+  UefiDriverEntryPoint|MdePkg/Library/UefiDriverEntryPoint/UefiDriverEntryPoint.inf
+  UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   CpuLib|MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
@@ -179,12 +184,46 @@
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   SynchronizationLib|MdePkg/Library/BaseSynchronizationLib/BaseSynchronizationLib.inf
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
+  ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
+  DebugAgentLib|MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
+  ImagePropertiesRecordLib|MdeModulePkg/Library/ImagePropertiesRecordLib/ImagePropertiesRecordLib.inf
+  VariablePolicyLib|MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLib.inf
+  VariablePolicyHelperLib|MdeModulePkg/Library/VariablePolicyHelperLib/VariablePolicyHelperLib.inf
+  VariableFlashInfoLib|MdeModulePkg/Library/BaseVariableFlashInfoLib/BaseVariableFlashInfoLib.inf
+  UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
+  UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
+  SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
+  CustomizedDisplayLib|MdeModulePkg/Library/CustomizedDisplayLib/CustomizedDisplayLib.inf
+  FrameBufferBltLib|MdeModulePkg/Library/FrameBufferBltLib/FrameBufferBltLib.inf
+  PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
+  SmbusLib|MdePkg/Library/DxeSmbusLib/DxeSmbusLib.inf
+  S3BootScriptLib|MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib.inf
+  TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
+  TdxMeasurementLib|MdeModulePkg/Library/TdxMeasurementLibNull/TdxMeasurementLibNull.inf
+  AuthVariableLib|MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
+  VarCheckLib|MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
+  FmpAuthenticationLib|MdeModulePkg/Library/FmpAuthenticationLibNull/FmpAuthenticationLibNull.inf
+  BmpSupportLib|MdeModulePkg/Library/BaseBmpSupportLib/BaseBmpSupportLib.inf
+  DisplayUpdateProgressLib|MdeModulePkg/Library/DisplayUpdateProgressLibGraphics/DisplayUpdateProgressLibGraphics.inf
+  IpmiCommandLib|MdeModulePkg/Library/BaseIpmiCommandLibNull/BaseIpmiCommandLibNull.inf
+  RngLib|MdePkg/Library/BaseRngLibTimerLib/BaseRngLibTimerLib.inf
+  SpiHcPlatformLib|MdeModulePkg/Library/BaseSpiHcPlatformLibNull/BaseSpiHcPlatformLibNull.inf
   OrderedCollectionLib|MdePkg/Library/BaseOrderedCollectionRedBlackTreeLib/BaseOrderedCollectionRedBlackTreeLib.inf
   SafeIntLib|MdePkg/Library/BaseSafeIntLib/BaseSafeIntLib.inf
+  RegisterFilterLib|MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf
+  UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
+  PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
+  PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
+  PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
+  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+  NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
 
   # ARM
-  ArmLib|ArmPkg/Library/ArmLib/ArmBaseLib.inf
-  ArmMmuLib|ArmPkg/Library/ArmMmuLib/ArmMmuBaseLib.inf
+  ArmLib|MdePkg/Library/ArmLib/ArmBaseLib.inf
+  ArmSmcLib|MdePkg/Library/ArmSmcLib/ArmSmcLib.inf
+  ArmHvcLib|ArmPkg/Library/ArmHvcLib/ArmHvcLib.inf
+  ArmMonitorLib|ArmPkg/Library/ArmMonitorLib/ArmMonitorLib.inf
+  ArmMmuLib|UefiCpuPkg/Library/ArmMmuLib/ArmMmuBaseLib.inf
   ArmGenericTimerCounterLib|ArmPkg/Library/ArmGenericTimerPhyCounterLib/ArmGenericTimerPhyCounterLib.inf
   ArmPlatformLib|SamsungPkg/GTS3LLtePkg/Library/PlatformMemoryMapLib/PlatformMemoryMapLib.inf
   CacheMaintenanceLib|ArmPkg/Library/ArmCacheMaintenanceLib/ArmCacheMaintenanceLib.inf
@@ -204,6 +243,8 @@
 
   # Timers
   TimerLib|ArmPkg/Library/ArmArchTimerLib/ArmArchTimerLib.inf
+  TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
+  RealTimeClockLib|EmbeddedPkg/Library/VirtualRealTimeClockLib/VirtualRealTimeClockLib.inf
 
   # Misc
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
@@ -213,7 +254,7 @@
   SortLib|MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
   UefiBootManagerLib|MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib.inf
   BootLogoLib|MdeModulePkg/Library/BootLogoLib/BootLogoLib.inf
-  FileExplorer|MdeModulePkg/Library/FileExplorerLib/FileExplorerLib.inf
+  FileExplorerLib|MdeModulePkg/Library/FileExplorerLib/FileExplorerLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   NonDiscoverableDeviceRegistrationLib|MdeModulePkg/Library/NonDiscoverableDeviceRegistrationLib/NonDiscoverableDeviceRegistrationLib.inf
 
@@ -221,13 +262,22 @@
   HobLib|EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
   MemoryAllocationLib|EmbeddedPkg/Library/PrePiMemoryAllocationLib/PrePiMemoryAllocationLib.inf
   PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
+  PrePiHobListPointerLib|ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointerLib.inf
+  ExtractGuidedSectionLib|EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
+
+[LibraryClasses.common.DXE_CORE]
+  HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
+  MemoryAllocationLib|MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
+  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
 
 [LibraryClasses.common.DXE_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
+  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
+  VariablePolicyLib|MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLibRuntimeDxe.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
 
@@ -243,7 +293,6 @@
 
 [BuildOptions.common]
   GCC:*_*_AARCH64_CC_FLAGS = -DARM_CPU_AARCH64 -DMSM8996 -DGTS3L_LTE
-  GCC:*_*_AARCH64_DLINK_FLAGS = --fix-cortex-a53-843419
 
 [BuildOptions.AARCH64.RELEASE]
   GCC:*_*_AARCH64_CC_FLAGS = -DMDEPKG_NDEBUG
@@ -262,6 +311,7 @@
       HobLib|EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
       MemoryAllocationLib|EmbeddedPkg/Library/PrePiMemoryAllocationLib/PrePiMemoryAllocationLib.inf
       PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
+      PrePiHobListPointerLib|ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointerLib.inf
       PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
       SerialPortLib|SamsungPkg/GTS3LLtePkg/Library/MsmUartSerialPortLib/MsmUartSerialPortLib.inf
   }
@@ -277,12 +327,12 @@
   # ------------------------------------------------------------------
   # PCD database
   # ------------------------------------------------------------------
-  MdeModulePkg/Universal/PCD/Dxe/PcdDxe.inf
+  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
 
   # ------------------------------------------------------------------
   # Core architecture protocols
   # ------------------------------------------------------------------
-  ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+  ArmPkg/Drivers/ArmGicDxe/ArmGicDxe.inf
   ArmPkg/Drivers/TimerDxe/TimerDxe.inf
   ArmPkg/Drivers/CpuDxe/CpuDxe.inf
   ArmPkg/Drivers/ArmPsciMpServicesDxe/ArmPsciMpServicesDxe.inf
@@ -348,7 +398,6 @@
   # Security
   # ------------------------------------------------------------------
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
-  SecurityPkg/RandomNumberGenerator/RngDxe/RngDxe.inf
 
   # ------------------------------------------------------------------
   # Console / HII
@@ -384,15 +433,6 @@
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
 
   # ------------------------------------------------------------------
-  # Network (stub — can be wired up to QCA6174 driver later)
-  # ------------------------------------------------------------------
-  NetworkPkg/DpcDxe/DpcDxe.inf
-  NetworkPkg/MnpDxe/MnpDxe.inf
-  NetworkPkg/Ip4Dxe/Ip4Dxe.inf
-  NetworkPkg/Dhcp4Dxe/Dhcp4Dxe.inf
-  NetworkPkg/Udp4Dxe/Udp4Dxe.inf
-
-  # ------------------------------------------------------------------
   # Boot manager
   # ------------------------------------------------------------------
   MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
@@ -415,8 +455,6 @@
       NULL|ShellPkg/Library/UefiShellAcpiViewCommandLib/UefiShellAcpiViewCommandLib.inf
       NULL|ShellPkg/Library/UefiShellInstall1CommandsLib/UefiShellInstall1CommandsLib.inf
       NULL|ShellPkg/Library/UefiShellDebug1CommandsLib/UefiShellDebug1CommandsLib.inf
-      NULL|ShellPkg/Library/UefiShellNetwork1CommandsLib/UefiShellNetwork1CommandsLib.inf
-      NULL|ShellPkg/Library/UefiShellNetwork2CommandsLib/UefiShellNetwork2CommandsLib.inf
       ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
       ShellCommandLib|ShellPkg/Library/UefiShellCommandLib/UefiShellCommandLib.inf
       ShellCEntryLib|ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf

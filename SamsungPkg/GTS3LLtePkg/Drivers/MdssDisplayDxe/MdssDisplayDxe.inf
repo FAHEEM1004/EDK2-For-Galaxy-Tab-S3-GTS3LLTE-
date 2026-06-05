@@ -21,6 +21,7 @@
   MdeModulePkg/MdeModulePkg.dec
   ArmPkg/ArmPkg.dec
   SamsungPkg/SamsungPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
 
 [LibraryClasses]
   UefiDriverEntryPoint

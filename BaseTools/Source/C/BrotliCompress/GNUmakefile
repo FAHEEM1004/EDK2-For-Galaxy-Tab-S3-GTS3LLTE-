@@ -8,8 +8,13 @@ MAKEROOT ?= ..
 
 APPNAME = BrotliCompress
 
+VENDORED_BROTLI_INCLUDE = brotli/c/include/brotli/encode.h
+
 OBJECTS = \
-  BrotliCompress.o \
+  BrotliCompress.o
+
+ifeq ($(wildcard $(VENDORED_BROTLI_INCLUDE)),$(VENDORED_BROTLI_INCLUDE))
+OBJECTS += \
   brotli/c/common/platform.o \
   brotli/c/common/shared_dictionary.o \
   brotli/c/common/constants.o \
@@ -45,8 +50,10 @@ OBJECTS = \
   brotli/c/enc/static_dict_lut.o \
   brotli/c/enc/static_init.o \
   brotli/c/enc/utf8_util.o
-
-include $(MAKEROOT)/Makefiles/app.makefile
-
 TOOL_INCLUDE = -I ./brotli/c/include
 LIBS += -lm
+else
+LIBS += -lbrotlienc -lbrotlidec -lbrotlicommon -lm
+endif
+
+include $(MAKEROOT)/Makefiles/app.makefile

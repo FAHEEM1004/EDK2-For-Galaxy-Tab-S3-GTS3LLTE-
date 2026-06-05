@@ -18,10 +18,18 @@
 #include <sys/types.h>
 #include <time.h>
 
+#if __has_include("./brotli/c/common/constants.h") && __has_include("./brotli/c/common/version.h")
 #include "./brotli/c/common/constants.h"
 #include "./brotli/c/common/version.h"
+#define BROTLI_COMPRESS_HAS_PRIVATE_HEADERS 1
+#else
+#define BROTLI_COMPRESS_HAS_PRIVATE_HEADERS 0
+#endif
 #include <brotli/decode.h>
 #include <brotli/encode.h>
+#ifndef BROTLI_MAX_BACKWARD_LIMIT
+#define BROTLI_MAX_BACKWARD_LIMIT(LgWin) ((((uint32_t)1) << (LgWin)) - 16)
+#endif
 
 #if !defined(_WIN32)
 #include <unistd.h>
@@ -75,6 +83,7 @@ size_t ScratchBufferSize = 0;
 static const size_t kFileBufferSize  = 1 << 19;
 
 static void Version(void) {
+#if BROTLI_COMPRESS_HAS_PRIVATE_HEADERS
   int Major;
   int Minor;
   int Patch;
@@ -82,6 +91,9 @@ static void Version(void) {
   Minor = (BROTLI_VERSION >> 12) & 0xFFF;
   Patch = BROTLI_VERSION & 0xFFF;
   printf("BrotliCompress %d.%d.%d\n", Major, Minor, Patch);
+#else
+  printf("BrotliCompress 0x%x\n", BrotliEncoderVersion ());
+#endif
 }
 
 static void Usage() {

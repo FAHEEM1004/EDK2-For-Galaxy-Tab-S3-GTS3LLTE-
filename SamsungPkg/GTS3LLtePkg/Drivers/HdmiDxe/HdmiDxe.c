@@ -276,7 +276,7 @@ HdmiGopBlt (
     }
     break;
 
-  case EfiBltVideoToBuffer:
+  case EfiBltVideoToBltBuffer:
     {
       UINTN  DstStride = (Delta == 0) ? Width : (Delta / sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
       for (Y = 0; Y < Height; Y++) {

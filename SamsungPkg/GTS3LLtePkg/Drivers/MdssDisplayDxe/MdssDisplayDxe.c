@@ -284,7 +284,7 @@ GopBlt (
       break;
     }
 
-    case EfiBltVideoToBuffer:
+    case EfiBltVideoToBltBuffer:
     {
       for (Row = 0; Row < Height; Row++) {
         for (Col = 0; Col < Width; Col++) {

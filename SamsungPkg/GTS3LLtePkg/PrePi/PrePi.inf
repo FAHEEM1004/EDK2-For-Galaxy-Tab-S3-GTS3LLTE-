@@ -24,12 +24,14 @@
   MdeModulePkg/MdeModulePkg.dec
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
   EmbeddedPkg/EmbeddedPkg.dec
   SamsungPkg/SamsungPkg.dec
 
 [LibraryClasses]
   ArmLib
   ArmMmuLib
+  ArmPlatformLib
   BaseLib
   BaseMemoryLib
   CacheMaintenanceLib
@@ -39,6 +41,7 @@
   PcdLib
   PrePiLib
   SerialPortLib
+  StackCheckLib
 
 [FixedPcd]
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultBaudRate
